@@ -10,7 +10,7 @@
     "ShowSystemNotificationWhenMinimising": false,
     "ShowSystemNotifications": false,
     "ShowSystemNotificationsIfChange": false,
-    "SuppressSocialPopup": true
+    "SuppressSocialPopup": false
   },
   "Calendar": {
     "SyncInterval": 15,
