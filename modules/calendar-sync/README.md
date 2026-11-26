@@ -13,6 +13,8 @@ Persoenliche Wiederherstellungsanleitung fuer Windows und Outlook Google Calenda
 
 Der PC braucht eine angemeldete Windows-Sitzung, Internet und eine funktionsfaehige Outlook-Classic-Installation samt Profil. Das ist kein Cloud-Dienst und kein sekundenaktueller Abgleich. Bei ausgeschaltetem PC erfolgt kein Outlook-Abgleich.
 
+OGCS und Outlook Classic muessen beide **ohne Administratorrechte** laufen. Der normale Windows-Benutzerautostart ist dafuer vorgesehen. `-Start` wird aus einer erhoehten PowerShell-Sitzung abgewiesen, damit kein Berechtigungskonflikt entsteht.
+
 ## Auf einem neuen PC
 
 1. Outlook Classic installieren, das private Mailprofil einrichten und den richtigen Kalender pruefen. Outlook mindestens einmal normal starten. Nicht versehentlich einen Firmenkalender mit dem privaten Google-Konto verbinden.
@@ -41,6 +43,14 @@ Am Quellsystem wurden zwei Abgleiche erfolgreich beendet: erster Durchlauf 17 Ei
 Dieses Repository enthaelt **keine** Live-`settings.xml`, OAuth-Tokens, API-Schluessel, Passwoerter, Outlook-IDs, Termindaten oder persoenlichen Konto-Adressen. Das Skript uebernimmt nur die ausdruecklich aufgefuehrten Optionen. Auf dem Zielsystem erstellte Kalender-IDs, Anmeldung und sonstige Einstellungen bleiben erhalten. Vor Aenderungen entsteht ein lokales Backup neben der echten `settings.xml`; dieses kann Zugangsdaten enthalten und gehoert nicht nach GitHub.
 
 Die Vorlage ist **kein Kalender-Datenbackup**. Vor Neuinstallation lokale Outlook-Datendateien/PST und alle nicht mit Google synchronisierten Kalender separat sichern. Termine ausserhalb des Sync-Zeitraums und Familien-/Samsung-/lokale Geraetekalender sind durch dieses Repo nicht gesichert. Google-Anmeldung muss auf dem neuen PC erneut erfolgen. Bei einem Umzug das alte Sync-Programm beenden, damit nicht zwei PCs denselben Kalender parallel abgleichen.
+
+## Fehler: Outlook nicht erreichbar / 0x800401E3 / 0x80080005
+
+Wenn Outlook normal und OGCS als Administrator gestartet wurde, kann OGCS Outlook ueber COM nicht erreichen. Das kann als `MK_E_UNAVAILABLE`, `CO_E_SERVER_EXEC_FAILURE` oder irrefuehrend als `Outlook has been unresponsive` erscheinen.
+
+Zuerst im Task-Manager unter Details die Spalte **Erhoeht** fuer beide Prozesse pruefen. OGCS ueber das Tray beenden und normal ueber das Startmenue wieder starten; Outlook muss dafuer nicht zwangsweise beendet werden. Keine Office-Neuinstallation oder COM-Neuregistrierung allein aufgrund dieser Codes vornehmen. Die Codes koennen auch andere Ursachen haben; ein erfolgreicher Anschluss und abgeschlossener Sync nach dem Neustart bestaetigen die Behebung.
+
+Auf dem Quellsystem am 26.11.2026 war genau dieser Unterschied nach einem manuellen Outlook-Neustart vorhanden und wurde durch einen normalen OGCS-Start korrigiert. Es wurden keine Kontoanmeldungen oder Kalendereinstellungen zurueckgesetzt.
 
 ## Dateien
 

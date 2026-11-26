@@ -7,6 +7,13 @@ param(
     [switch]$Start
 )
 $ErrorActionPreference = 'Stop'
+if ($Start -and $Mode -ne 'Check' -and -not $WhatIfPreference) {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+    if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        throw 'OGCS darf fuer Outlook Classic nicht aus einer Administrator-Sitzung gestartet werden. Eine normale PowerShell oeffnen und den Aufruf dort wiederholen. Beide Programme muessen auf derselben normalen Berechtigungsstufe laufen.'
+    }
+}
 $config = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'config.json') -Raw | ConvertFrom-Json
 $manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'installer.json') -Raw | ConvertFrom-Json
 $launcher = Join-Path $env:LOCALAPPDATA 'OutlookGoogleCalendarSync\OutlookGoogleCalendarSync.exe'

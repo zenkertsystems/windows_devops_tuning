@@ -33,6 +33,14 @@ try {
     $path = Join-Path $testDir 'settings.xml'
     $xml.Save($path)
     $before = (Get-FileHash $path).Hash
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+    if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        $blocked = $false
+        try { & (Join-Path $PSScriptRoot 'Restore-CalendarSync.ps1') -Mode Configure -SettingsPath $path -Start }
+        catch { if ($_.Exception.Message -like '*Administrator-Sitzung*') { $blocked = $true } else { throw } }
+        if (-not $blocked -or (Get-FileHash $path).Hash -ne $before) { throw 'Elevated Start was not rejected before mutation.' }
+    }
     & (Join-Path $PSScriptRoot 'Restore-CalendarSync.ps1') -Mode Configure -SettingsPath $path -WhatIf
     if ((Get-FileHash $path).Hash -ne $before) { throw 'WhatIf changed the file.' }
     # Running processes must be refused. Do not stop or modify the live application.
