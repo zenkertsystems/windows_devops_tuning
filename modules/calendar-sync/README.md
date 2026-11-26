@@ -60,3 +60,7 @@ Auf dem Quellsystem am 26.11.2026 war genau dieser Unterschied nach einem manuel
 - `Test-Restore.ps1`: isolierter Test mit synthetischer XML, ohne Live-Konfiguration oder Autostart zu veraendern.
 
 Quellen: [OGCS](https://www.outlookgooglecalendarsync.com/), [Quellcode und Releases](https://github.com/phw198/OutlookGoogleCalendarSync), [Sync-Intervalle](https://www.outlookgooglecalendarsync.com/guide/syncoptions-when.html).
+
+## OGCS-Werbefenster automatisch schliessen
+
+`Install-QuietOGCS.ps1` installiert die benutzerspezifische Aufgabe `OGCS Quiet Promotions`. Ein unsichtbarer Helfer reagiert auf neue Fenster und schliesst ausschliesslich `Help Promote OGCS` aus dem OGCS-Prozess. Der aktuelle Werbedialog wurde damit erfolgreich geschlossen. Sync-Fehler, Google-Anmeldung, Loeschbestaetigungen und manuell geoeffnete Einstellungen bleiben unveraendert. Der Start-Splash wird nicht unterdrueckt. Ruecknahme: Aufgabe beenden und loeschen; lokaler Helfer liegt unter `%LOCALAPPDATA%\WindowsDevOpsTuning\QuietOGCS`. Ein kompletter Neustarttest steht noch aus.
