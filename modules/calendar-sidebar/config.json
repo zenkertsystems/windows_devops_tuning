@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "hideFocusSession": 0,
+    "maxHeightExpanded": 250,
+    "calendarPosition": "above",
+    "hideCompletedEvents": 0,
+    "collapsibleNotificationCenter": 1,
+    "minFetchInterval": 0,
+    "keyboardShortcuts": 1,
+    "buttonsPosition": "above",
+    "icsPath[0].colour": "blue",
+    "applyColorsOnEventBorders": 1,
+    "groupingMode": "inline",
+    "maxHeightCollapsed": 350,
+    "icsPath[0].path": "__LOCAL_CALENDAR__",
+    "numberOfWeeksInView": 5,
+    "timeColumnWidth": 80
+  },
+  "mod": {
+    "Version": "1.3",
+    "Architecture": "x86-64",
+    "Disabled": 0,
+    "LibraryFileName": "agenda-in-calendar-view_1.3.dll",
+    "Include": "ShellExperienceHost.exe|ShellHost.exe"
+  }
+}

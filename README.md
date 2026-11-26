@@ -2,6 +2,8 @@
 
 Im Mittelpunkt stehen die persoenliche Windows-Oberflaeche, PowerShell 7 als sichtbare Standardshell und der Google-/Outlook-Classic-Kalender. Entwicklerwerkzeuge und Reparaturen bleiben getrennte Zusatzmodule. Zugangsdaten und private Dateien bleiben lokal.
 
+Termine direkt unter dem Kalender im Windows-Benachrichtigungscenter: [Kalender-Seitenleiste einrichten](modules/calendar-sidebar/README.md). Dieses separate Modul benoetigt Windhawk und Administratorrechte; Kalenderdaten bleiben lokal.
+
 ## Essentials: persoenliche Grundeinrichtung
 
 In einer PowerShell-7-Sitzung:
