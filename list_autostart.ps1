@@ -81,7 +81,7 @@ Write-Host "=== ✅ SCAN ABGESCHLOSSEN ===" -ForegroundColor Cyan
 
 # --- Optional: HTML-Export ---
 if ($HtmlReport) {
-    $logDir = "C:\Tools\windows_devops_tuning\logs"
+    $logDir = Join-Path $PSScriptRoot 'logs'
     if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Force -Path $logDir | Out-Null }
     $htmlPath = "$logDir\autostart_report.html"
 

@@ -1,77 +1,74 @@
-# 🧰 Windows DevOps Tuning Suite
-**High-Performance System Hardening & Automation for Industrial AI Workflows**
+# Windows neu einrichten
 
-> *"Consistency in the development environment is the first step toward reliability in production. This suite ensures that Windows 11 operates as a stable, high-performance DevOps workstation—without telemetry, without clutter."*
->
-> *"Konsistenz in der Entwicklungsumgebung ist der erste Schritt zur Zuverlässigkeit in der Produktion. Diese Suite stellt sicher, dass Windows 11 als stabile, hochperformante DevOps-Workstation agiert – ohne Telemetrie, ohne Ballast."*
+Modulare Einrichtung fuer Windows 11: Entwicklerwerkzeuge, Terminal, optionale Oberflaechen-Einstellungen und persoenlicher Google-/Outlook-Classic-Kalender. Die Konfiguration ist im Repository nachvollziehbar; Zugangsdaten und private Dateien bleiben lokal.
 
----
+## Schnellstart
 
-### 🧠 Core Philosophy | Kernphilosophie
-**Industrial-Grade Windows (DE/EN):**
-Diese Toolbox wurde entwickelt, um Windows 11 für den Einsatz in anspruchsvollen **Industrial AI- und HPC-Umgebungen** zu optimieren. Der Fokus liegt auf maximaler Kontrolle, Deaktivierung unnötiger Hintergrunddienste (Hyper-V/VBS Konflikte) und der Automatisierung des Tool-Deployments.
-*This toolbox was developed to optimize Windows 11 for use in demanding **Industrial AI and HPC environments**. The focus is on maximum control, disabling unnecessary background services (Hyper-V/VBS conflicts), and automating tool deployment.*
-
----
-
-### 🚀 Key Capabilities | Hauptfunktionen
-
-#### 🧱 Virtualization Excellence (VMware)
-Spezialisierte Skripte zur Deaktivierung von Windows-Features, die mit der Hardware-Virtualisierung (VT-x/VT-d) konkurrieren.
-*Specialized scripts to disable Windows features that compete with hardware virtualization (VT-x/VT-d).*
-- **Script:** `vmware_ready_check.ps1`
-- **Impact:** Disables Hyper-V, VBS, and Device Guard for native VMware performance.
-
-#### 🖥️ PowerShell 7 Modernization
-Automatisierte Migration auf PowerShell 7 als primäre Shell, inklusive Bereinigung von Legacy-Komponenten.
-*Automated migration to PowerShell 7 as the primary shell, including the removal of legacy components.*
-- **Scripts:** `update_powershell_latest.ps1`, `remove_legacy_powershell.ps1`.
-
-#### 🔒 System Hardening & DevOps Setup
-Gezielte Reparatur von RDP-Diensten, Windows Hello Fixes und automatisiertes Winget-basiertes Tooling.
-*Targeted repair of RDP services, Windows Hello fixes, and automated Winget-based tooling.*
-- **Scripts:** `rdp_check_and_fix.ps1`, `install_dev_tools.ps1`, `setup_windows_devops.ps1`.
-
----
-
-### 🛠️ Quickstart | Schnellstart
-
-**1. Clone the Suite:**
 ```powershell
-git clone https://github.com/DerMilchjieper/windows_devops_tuning.git "C:\Tools\windows_devops_tuning"
-cd C:\Tools\windows_devops_tuning
+git clone https://github.com/zenkertsystems/windows_devops_tuning.git
+cd windows_devops_tuning
+# Zeigt nur die verfuegbaren Module:
+.\setup_windows_devops.ps1
+# Vorschau, ohne Installationen oder Systemeinstellungen zu aendern:
+.\setup_windows_devops.ps1 -Module DevTools -WhatIf
+# Gewaehlte Pakete installieren:
+.\setup_windows_devops.ps1 -Module DevTools
+# Danach neue PowerShell-7-Sitzung oeffnen (pwsh):
+.\setup_windows_devops.ps1 -Module Terminal -WhatIf
+.\setup_windows_devops.ps1 -Module Terminal
 ```
 
-**2. Execute Full DevOps Setup (Admin required):**
+Als normaler Benutzer starten. Installer koennen erforderliche Rechte selbst anfordern. Keine automatische Gesamtausfuehrung und kein automatischer Neustart. `-Silent` wird zur Aufrufkompatibilitaet akzeptiert und waehlt keine Module aus.
+
+## Module
+
+| Modul / Skript | Verhalten |
+|---|---|
+| `DevTools` / `install_dev_tools.ps1` | Pakete aus `packages.json`: PowerShell 7, Git, GitHub CLI, Windows Terminal, VS Code |
+| `PowerShell` / `update_powershell_latest.ps1` | Nur PowerShell installieren/aktualisieren, keine Shell-/Editor-Einstellungen aendern |
+| `Terminal` / `set_pwsh_default.ps1` | PowerShell-7-Profil als Windows-Terminal-Standard; benoetigt PowerShell 7; sichert vorhandenes JSON |
+| `ClassicContextMenu` | Optionaler benutzerspezifischer Registry-Tweak; Windows-Build-abhaengig; mit `restore_classic_context_menu.ps1 -Disable` umkehrbar |
+| `CalendarInstall` | Festgelegten OGCS-Installer laden und SHA256 pruefen |
+| `CalendarConfigure` | Nach Kontoanmeldung ausgewaehltes Kalenderprofil konfigurieren; [Anleitung](modules/calendar-sync/README.md) |
+| `list_autostart.ps1` | Autostart-Eintraege anzeigen; `-HtmlReport` erzeugt einen lokalen Bericht |
+| `rdp_check_and_fix.ps1` | Standardmaessig Diagnose; `-Fix` separat als Administrator; optional `-User 'PC\Benutzer'` |
+
+`set_pwsh_default.ps1 -IncludeVSCode` setzt zusaetzlich ein PowerShell-7-Profil in VS Code. Andere JSON-Einstellungen bleiben erhalten; Kommentare/Formatierung werden beim Serialisieren normalisiert. Bei Parsefehlern wird abgebrochen. Terminal/VS Code vorher einmal starten. Das Standardprofil bestimmt die Shell im Terminal, nicht den Windows-Standardhost fuer alle Konsolen.
+
+RDP wird nicht im Setup aktiviert. Der optionale Fix behaelt den vorhandenen Port bei, startet den Dienst und legt eine eigene TCP-Firewallregel nur fuer **Private / LocalSubnet** an. Er setzt keine Monitor-/Audio-/Kamerapolicies und aendert keine anderen Firewallregeln. Bereits bestehende breitere Regeln werden dadurch nicht eingeschraenkt. Windows Home unterstuetzt keinen regulaeren RDP-Host.
+
+## Kalender wiederherstellen
+
 ```powershell
-pwsh -ExecutionPolicy Bypass -File .\setup_windows_devops.ps1
+.\setup_windows_devops.ps1 -Module CalendarInstall
 ```
 
-**3. Optimize for VMware:**
+Danach OGCS oeffnen, Outlook Classic und Google anmelden, privaten Zielkalender und persoenlichen Google-Kalender waehlen, speichern und OGCS ueber das Tray-Menue beenden. Anschliessend:
+
 ```powershell
-.\vmware_ready_check.ps1 -Fix
+.\setup_windows_devops.ps1 -Module CalendarConfigure -WhatIf
+.\setup_windows_devops.ps1 -Module CalendarConfigure
 ```
 
----
+[Vollstaendige Kalender-Anleitung](modules/calendar-sync/README.md): Zweiwegeabgleich alle 15 Minuten, Autostart im Hintergrund, 365 Tage zurueck/voraus. Kontoanmeldungen und Kalenderauswahl werden auf neuen PCs bewusst neu vorgenommen. Die Konfigurationsvorlage ist kein Kalenderdaten-Backup.
 
-### 🧩 Technical Insights | Technische Einblicke
+## Vor Neuinstallation oder Umzug
 
-- **Telemetry-Free:** Alle Skripte sind darauf ausgelegt, die System-Privatsphäre zu erhöhen und unnötige "Phone-Home" Dienste zu reduzieren.
-- **Idempotent Design:** Die Skripte können mehrfach ausgeführt werden, ohne das System in einen inkonsistenten Zustand zu bringen.
-- **Offline-Ready:** Fokus auf lokale Ausführung und minimale externe Abhängigkeiten (außer Winget für Tooling).
+[Checkliste](docs/reinstall-checklist.md) abarbeiten. Dieses Repository stellt die hier aufgefuehrten Einstellungen wieder her; es ist kein vollstaendiges Abbild des Rechners. Laufwerksbuchstaben, Visual-Studio-Installation, Outlook/PST, Browser-/Google-Anmeldung, Lizenzen und private Projekte separat sichern/einrichten.
 
----
+## Aufraeumung
 
-### 🪪 License & Usage
-Dieses Projekt steht unter der **MIT License**.
-*This project is licensed under the **MIT License**.*
+- VMware-Ready-Check und VMware-Installation entfernt. Das Setup deaktiviert keine Virtualisierungs-/Windows-Sicherheitsfunktionen.
+- Alte PIN-Reset- und PowerShell-Bereinigungsskripte nach [`legacy/`](legacy/README.md) verschoben und aus dem Setup entfernt.
+- Feste `C:\Tools`-Pfade und der Benutzername aus aktiven Einrichtungsskripten entfernt. Keine ungueltigen Shell-Registry-Eintraege mehr.
+- Keine pauschalen Versprechen wie vollstaendige Telemetriefreiheit oder universelle Hardwareoptimierung. Softwareinstallationen benoetigen Internet; `packages.json` verwendet die jeweils angebotenen Paketversionen, OGCS einen festgelegten Installer.
 
----
+## Validierung
 
-### 📬 Connect with the Architect
-- **Vibe:** Senior Enterprise Architect, Industrial AI Specialist.
-- **Context:** Created for daily use in industrial AI and HPC environments.
-- **Web:** [zentrader.io](https://zentrader.io)
+```powershell
+pwsh -NoProfile -File .\Test-Repository.ps1
+```
 
----
-*Automation suite generated and maintained by Gemini CLI | Performance-first philosophy.*
+Prueft Syntax, Paketmanifest, Setup-Vorschau sowie die Kalendertransformation mit synthetischen Daten. Aktive Installations-/RDP-/Registry-Aenderungen und eine komplette Neuinstallation werden dabei nicht ausgefuehrt. GitHub Actions fuehrt die gleichen Pruefungen auf einem Windows-Runner aus.
+
+Lizenz: [MIT](LICENSE).

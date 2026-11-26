@@ -1,0 +1,17 @@
+name: Validate Windows setup
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Parse scripts and test dry runs
+        shell: pwsh
+        run: ./Test-Repository.ps1
+      - name: Check calendar restore with Windows PowerShell 5.1
+        shell: powershell
+        run: ./modules/calendar-sync/Test-Restore.ps1

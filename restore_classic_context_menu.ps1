@@ -1,32 +1,18 @@
-﻿<#
-  restore_classic_context_menu.ps1
-  Aktiviert das klassische Kontextmenü von Windows 10 unter Windows 11
-  Nutzung:
-    .\restore_classic_context_menu.ps1 -Enable   # Aktivieren
-    .\restore_classic_context_menu.ps1 -Disable  # Zurück auf Win11-Style
-#>
-
+#Requires -Version 5.1
+[CmdletBinding(SupportsShouldProcess,DefaultParameterSetName='Status')]
 param(
-  [switch]$Enable,
-  [switch]$Disable
+    [Parameter(Mandatory,ParameterSetName='Enable')][switch]$Enable,
+    [Parameter(Mandatory,ParameterSetName='Disable')][switch]$Disable
 )
-
-if ($Enable) {
-    Write-Host " Aktiviere klassisches Kontextmenü..." -ForegroundColor Cyan
-    reg add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
-    Write-Host " Aktiviert. Starte Explorer neu..." -ForegroundColor Green
+$ErrorActionPreference = 'Stop'
+$key = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}'
+if ($Enable -and $PSCmdlet.ShouldProcess($key, 'Klassisches Kontextmenue anfordern')) {
+    $child = Join-Path $key 'InprocServer32'
+    New-Item -Path $child -Force | Out-Null
+    Set-Item -LiteralPath $child -Value ''
+} elseif ($Disable -and $PSCmdlet.ShouldProcess($key, 'Kontextmenue-Anpassung zuruecknehmen')) {
+    if (Test-Path -LiteralPath $key) { Remove-Item -LiteralPath $key -Recurse -Force }
+} elseif (-not $Enable -and -not $Disable) {
+    Write-Host ('Klassisches Kontextmenue angefordert: ' + (Test-Path -LiteralPath $key))
 }
-elseif ($Disable) {
-    Write-Host "  Setze Windows 11-Kontextmenü wieder zurück..." -ForegroundColor Cyan
-    reg delete "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}" /f
-    Write-Host " Deaktiviert. Starte Explorer neu..." -ForegroundColor Green
-}
-else {
-    Write-Host " Bitte Parameter angeben: -Enable oder -Disable" -ForegroundColor Yellow
-    exit
-}
-
-taskkill /F /IM explorer.exe
-Start-Sleep -Seconds 1
-start explorer.exe
-Write-Host " Explorer neu gestartet  Änderungen aktiv." -ForegroundColor Cyan
+if ($Enable -or $Disable) { Write-Host 'Nach Ab-/Anmeldung pruefen. Unterstuetzung haengt vom Windows-Build ab.' }

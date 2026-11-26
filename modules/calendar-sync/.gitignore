@@ -1,0 +1,17 @@
+# Never commit live application data, credentials, logs or calendar exports.
+settings*.xml*
+*.log*
+*.ics
+*.pst
+*.ost
+*.csv
+*.exe
+*.zip
+*.nupkg
+*.bak
+*.before-*
+*token*
+*credential*
+*secret*
+Google.Apis.Auth*/
+local/

@@ -1,0 +1,38 @@
+{
+  "Application": {
+    "AnonymiseLogs": true,
+    "StartInTray": true,
+    "StartOnStartup": true,
+    "StartOnStartupAllUsers": false,
+    "MinimiseToTray": true,
+    "MinimiseNotClose": true,
+    "MuteClickSounds": true,
+    "ShowSystemNotificationWhenMinimising": false,
+    "ShowSystemNotifications": false,
+    "ShowSystemNotificationsIfChange": false,
+    "SuppressSocialPopup": true
+  },
+  "Calendar": {
+    "SyncInterval": 15,
+    "SyncIntervalUnit": "Minutes",
+    "OutlookPush": false,
+    "DaysInThePast": 365,
+    "DaysInTheFuture": 365,
+    "MergeItems": true,
+    "DisableDelete": false,
+    "ConfirmOnDelete": true,
+    "AddDescription": true,
+    "AddDescription_OnlyToGoogle": true,
+    "AddLocation": true,
+    "AddReminders": true,
+    "AddAttendees": false,
+    "AddColours": false,
+    "AddGMeet": true,
+    "ExcludeDeclinedInvites": true,
+    "ExcludeGoals": true,
+    "ExcludeAllDays": false,
+    "ExcludePrivate": false,
+    "ExcludeFree": false,
+    "ExcludeTentative": false
+  }
+}

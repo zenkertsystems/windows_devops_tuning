@@ -1,75 +1,33 @@
-﻿<#  
-  rdp_check_and_fix.ps1
-  Prüft und repariert RDP-Verbindungen (Firewall, Listener, Dienst, Gruppenrechte)
-  Nutzung:
-    .\rdp_check_and_fix.ps1
-    .\rdp_check_and_fix.ps1 -Fix
-#>
-
-param([switch]$Fix)
-
-Write-Host "`n=== RDP Check & Fix ===`n" -ForegroundColor Cyan
-
-# 1. Dienst prüfen
-$service = Get-Service TermService -ErrorAction SilentlyContinue
-if ($service -and $service.Status -eq 'Running') {
-    Write-Host " TermService läuft" -ForegroundColor Green
-} else {
-    Write-Host " TermService nicht aktiv!" -ForegroundColor Yellow
-    if ($Fix) {
-        Write-Host "-> Starte Dienst..." -ForegroundColor Cyan
-        Start-Service TermService -ErrorAction SilentlyContinue
-    }
+#Requires -Version 5.1
+[CmdletBinding(SupportsShouldProcess)]
+param([switch]$Fix,[string]$User)
+$ErrorActionPreference = 'Stop'
+$server = 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server'
+$listener = Join-Path $server 'WinStations\RDP-Tcp'
+$port = (Get-ItemProperty -LiteralPath $listener).PortNumber
+Get-Service TermService | Select-Object Name,Status,StartType
+Write-Host ('RDP-Port: ' + $port)
+Write-Host ('Verbindungen deaktiviert: ' + (Get-ItemProperty -LiteralPath $server).fDenyTSConnections)
+$group = Get-LocalGroup -SID 'S-1-5-32-555'
+Get-LocalGroupMember -Group $group | Select-Object Name
+if (-not $Fix) { return }
+if ($WhatIfPreference) {
+    Write-Host 'Geplant: RDP aktivieren, Dienst starten, eigene Firewallregel fuer privates Netz/LocalSubnet anlegen.'
+    if ($User) { Write-Host ('Geplant: Benutzer der RDP-Gruppe hinzufuegen: ' + $User) }
+    return
 }
-
-# 2. Firewall prüfen
-$firewallRules = Get-NetFirewallRule -DisplayGroup "Remotedesktop" -ErrorAction SilentlyContinue
-if ($firewallRules | Where-Object { $_.Enabled -eq 'True' }) {
-    Write-Host " Firewall-Regeln für RDP sind aktiv" -ForegroundColor Green
-} else {
-    Write-Host " Firewall-Regeln für RDP sind deaktiviert!" -ForegroundColor Yellow
-    if ($Fix) {
-        Write-Host "-> Aktiviere Firewall-Regeln..." -ForegroundColor Cyan
-        Enable-NetFirewallRule -DisplayGroup "Remotedesktop" | Out-Null
-    }
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw '-Fix benoetigt eine bewusst als Administrator gestartete Sitzung.' }
+if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, 'RDP auf vorhandenem Port aktivieren (Private/LocalSubnet)')) {
+    Set-ItemProperty -LiteralPath $server -Name fDenyTSConnections -Value 0
+    Start-Service TermService
+    $name = 'WindowsDevOps-RDP-Private'
+    if (Get-NetFirewallRule -Name $name -ErrorAction SilentlyContinue) { Remove-NetFirewallRule -Name $name }
+    New-NetFirewallRule -Name $name -DisplayName 'Windows DevOps RDP (Private LAN)' -Direction Inbound -Action Allow -Protocol TCP -LocalPort $port -Profile Private -RemoteAddress LocalSubnet | Out-Null
 }
-
-# 3. RDP-Port prüfen
-$listener = netstat -ano | findstr ":3389"
-if ($listener) {
-    Write-Host " RDP Listener läuft auf Port 3389" -ForegroundColor Green
-} else {
-    Write-Host " Kein aktiver RDP Listener auf Port 3389!" -ForegroundColor Yellow
-    if ($Fix) {
-        Write-Host "-> Setze Standardport zurück..." -ForegroundColor Cyan
-        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v PortNumber /t REG_DWORD /d 3389 /f | Out-Null
-        Restart-Service TermService -Force
-    }
+if ($User -and $PSCmdlet.ShouldProcess($User, 'Zur lokalen RDP-Benutzergruppe hinzufuegen')) {
+    $account = New-Object Security.Principal.NTAccount($User)
+    $sid = $account.Translate([Security.Principal.SecurityIdentifier]).Value
+    $members = @(Get-LocalGroupMember -Group $group)
+    if ($sid -notin @($members | ForEach-Object { $_.SID.Value })) { Add-LocalGroupMember -Group $group -Member $User }
 }
-
-# 4. Benutzerrechte prüfen
-$rdpUsers = Get-LocalGroupMember -Group "Remotedesktopbenutzer" | Select-Object -ExpandProperty Name
-if ($rdpUsers -contains "$env:COMPUTERNAME\wizzard") {
-    Write-Host " Benutzer 'wizzard' hat RDP-Rechte" -ForegroundColor Green
-} else {
-    Write-Host " Benutzer 'wizzard' fehlt in der RDP-Gruppe!" -ForegroundColor Yellow
-    if ($Fix) {
-        Write-Host "-> Füge 'wizzard' hinzu..." -ForegroundColor Cyan
-        Add-LocalGroupMember -Group "Remotedesktopbenutzer" -Member "wizzard"
-    }
-}
-
-# 5. Optimierungen (nur im Fix-Modus)
-if ($Fix) {
-    Write-Host "`n=== Anwenden von Optimierungen ===" -ForegroundColor Cyan
-    reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f | Out-Null
-    reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v KeepAliveTimeout /t REG_DWORD /d 60000 /f | Out-Null
-    reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v MaxMonitors /t REG_DWORD /d 1 /f | Out-Null
-    reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v fDisableCam /t REG_DWORD /d 1 /f | Out-Null
-    reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v fDisableAudioCapture /t REG_DWORD /d 1 /f | Out-Null
-    Write-Host " RDP-Optimierungen angewendet" -ForegroundColor Green
-}
-
-Write-Host ""
-Write-Host "RDP-Check abgeschlossen." -ForegroundColor Cyan
-Write-Host "-> Teste nun: mstsc /v:127.0.0.1" -ForegroundColor Yellow

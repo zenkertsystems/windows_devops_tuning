@@ -1,0 +1,17 @@
+logs/
+local/
+*.log*
+*.bak
+*.backup-*
+*.tmp
+settings*.xml*
+*.pst
+*.ost
+*.ics
+*.csv
+*.exe
+*.zip
+*.nupkg
+*token*
+*credential*
+*secret*
