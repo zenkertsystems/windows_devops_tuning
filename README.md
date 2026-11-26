@@ -80,6 +80,8 @@ Danach OGCS oeffnen, Outlook Classic und Google anmelden, privaten Zielkalender 
 
 [Checkliste](docs/reinstall-checklist.md) abarbeiten. Dieses Repository stellt die hier aufgefuehrten Einstellungen wieder her; es ist kein vollstaendiges Abbild des Rechners. Laufwerksbuchstaben, Visual-Studio-Installation, Outlook/PST, Browser-/Google-Anmeldung, Lizenzen und private Projekte separat sichern/einrichten.
 
+Git/GitHub nach der Kontoumbenennung auf `zenkertsystems` einrichten: [Identitaet und Anmeldungen](docs/github-identity.md). Git-Absender, Credential Manager und GitHub CLI sind getrennte Einstellungen.
+
 ## Aufraeumung
 
 - VMware-Ready-Check und VMware-Installation entfernt. Das Setup deaktiviert keine Virtualisierungs-/Windows-Sicherheitsfunktionen.
