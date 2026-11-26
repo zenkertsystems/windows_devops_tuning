@@ -80,6 +80,8 @@ Danach OGCS oeffnen, Outlook Classic und Google anmelden, privaten Zielkalender 
 
 ## Vor Neuinstallation oder Umzug
 
+Fuer die Rueckkehr zum gesamten Windows-Zustand auf diesem PC gibt es zusaetzlich die [Systemabbild-Anleitung](docs/system-image-recovery.md) und `Start-SystemImage.ps1`. Umfang und Zielplatte vorher auswaehlen; das private Abbild selbst gehoert nicht ins Repository.
+
 Private Momentaufnahme der aktuellen Einstellungen erstellen (administrative PowerShell 7):
 
 ```powershell
