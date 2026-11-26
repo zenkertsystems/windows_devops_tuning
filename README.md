@@ -80,6 +80,14 @@ Danach OGCS oeffnen, Outlook Classic und Google anmelden, privaten Zielkalender 
 
 ## Vor Neuinstallation oder Umzug
 
+Private Momentaufnahme der aktuellen Einstellungen erstellen (administrative PowerShell 7):
+
+```powershell
+.\Backup-CurrentConfiguration.ps1
+```
+
+Ziel: `D:\WindowsConfigBackups`, ausserhalb des Repositories. [Inhalt und Wiederherstellungsgrenzen](docs/private-backup-restore.md). Lokale Outlook-Daten koennen zusaetzlich mit `modules/calendar-sync/Export-LocalOutlookData.ps1 -BackupDirectory <Sicherungsordner>` aus einer normalen Windows-PowerShell-Sitzung bei geoeffnetem Outlook gesichert werden.
+
 [Checkliste](docs/reinstall-checklist.md) abarbeiten. Dieses Repository stellt die hier aufgefuehrten Einstellungen wieder her; es ist kein vollstaendiges Abbild des Rechners. Laufwerksbuchstaben, Visual-Studio-Installation, Outlook/PST, Browser-/Google-Anmeldung, Lizenzen und private Projekte separat sichern/einrichten.
 
 Git/GitHub nach der Kontoumbenennung auf `zenkertsystems` einrichten: [Identitaet und Anmeldungen](docs/github-identity.md). Git-Absender, Credential Manager und GitHub CLI sind getrennte Einstellungen.
