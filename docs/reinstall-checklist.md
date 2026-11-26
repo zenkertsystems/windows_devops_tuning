@@ -15,7 +15,7 @@
 3. `packages.json` pruefen, dann nur gewuenschte Module mit `-WhatIf` ansehen und gezielt anwenden.
 4. Terminal einmal starten; PowerShell-7-Standardprofil in einer neuen `pwsh`-Sitzung konfigurieren.
 5. Visual Studio/C++-Workloads, eigene Programme und Projekte separat installieren/wiederherstellen. Diese sind nicht automatisch Teil des Basispaketmanifests.
-6. Outlook Classic mit dem privaten Profil einrichten und Daten wiederherstellen. Google und GitHub neu anmelden.
+6. Outlook Classic mit dem privaten Profil einrichten und Daten wiederherstellen. `OutlookClassic` anwenden und MAILTO/.eml/.msg/.ics in Windows als Standards fuer Outlook (klassisch) bestaetigen. Google und GitHub neu anmelden.
 7. Kalender gemaess [Anleitung](../modules/calendar-sync/README.md) verbinden und Erstabgleich kontrollieren.
 8. Am Handy persoenlichen Google-Kalender und Kontosynchronisation pruefen.
 9. Einmal Windows neu starten/anmelden und Kalenderautostart sowie Abgleich pruefen.

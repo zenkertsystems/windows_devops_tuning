@@ -11,7 +11,7 @@ In einer PowerShell-7-Sitzung:
 .\setup_windows_devops.ps1 -Module Essentials
 ```
 
-Das Profil setzt PowerShell 7 im Terminal als Standard, erstellt eine Startmenue-Verknuepfung, blendet alte PowerShell-/ISE-Profile aus, sichert alte Startmenue-Verknuepfungen ausserhalb des Menues und stellt das gespeicherte Look-and-feel wieder her. Es bereitet ausserdem OGCS vor. Google-Anmeldung und Kalenderauswahl sind einmalig gemaess [Kalenderanleitung](modules/calendar-sync/README.md) erforderlich; danach `CalendarConfigure` ausfuehren.
+Das Profil setzt PowerShell 7 im Terminal als Standard, erstellt eine Startmenue-Verknuepfung, blendet alte PowerShell-/ISE-Profile aus, sichert alte Startmenue-Verknuepfungen ausserhalb des Menues und stellt das gespeicherte Look-and-feel wieder her. Es setzt die Praeferenz fuer Outlook Classic mit deaktivierter automatischer Benutzermigration und bereitet OGCS vor. Die geschuetzten Mail-Standardzuordnungen einmal ueber die [Windows-Oberflaeche bestaetigen](modules/outlook-classic/README.md). Google-Anmeldung und Kalenderauswahl sind einmalig gemaess [Kalenderanleitung](modules/calendar-sync/README.md) erforderlich; danach `CalendarConfigure` ausfuehren.
 
 Falls PowerShell 7 auf einem neuen PC noch fehlt, zuerst `setup_windows_devops.ps1 -Module PowerShell` mit Windows PowerShell ausfuehren und danach `pwsh` starten. Windows Terminal muss installiert und mindestens einmal geoeffnet sein. Die Essentials installieren keine komplette Entwickler-Toolchain.
 
@@ -43,7 +43,8 @@ Als normaler Benutzer starten. Installer koennen erforderliche Rechte selbst anf
 |---|---|
 | `DevTools` / `install_dev_tools.ps1` | Pakete aus `packages.json`: PowerShell 7, Git, GitHub CLI, Windows Terminal, VS Code |
 | `PowerShell` / `update_powershell_latest.ps1` | Nur PowerShell installieren/aktualisieren, keine Shell-/Editor-Einstellungen aendern |
-| `Essentials` | Terminal + LookAndFeel + CalendarInstall, ohne Entwicklerpakete |
+| `Essentials` | Terminal + LookAndFeel + OutlookClassic + CalendarInstall, ohne Entwicklerpakete |
+| `OutlookClassic` | Classic bevorzugen, Umschalter ausblenden und automatische Benutzermigration deaktivieren; [Standardzuordnungen](modules/outlook-classic/README.md) separat bestaetigen |
 | `LookAndFeel` | Gespeicherte Windows-Oberflaeche mit vorherigem lokalem Backup |
 | `Terminal` / `set_pwsh_default.ps1` | PowerShell 7 als Terminalstandard/Startmenue-Verknuepfung; alte PS5-/ISE-Menueeintraege sichern und ausblenden |
 | `ClassicContextMenu` | Optionaler benutzerspezifischer Registry-Tweak; Windows-Build-abhaengig; mit `restore_classic_context_menu.ps1 -Disable` umkehrbar |
