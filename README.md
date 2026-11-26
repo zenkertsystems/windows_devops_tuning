@@ -1,6 +1,23 @@
 # Windows neu einrichten
 
-Modulare Einrichtung fuer Windows 11: Entwicklerwerkzeuge, Terminal, optionale Oberflaechen-Einstellungen und persoenlicher Google-/Outlook-Classic-Kalender. Die Konfiguration ist im Repository nachvollziehbar; Zugangsdaten und private Dateien bleiben lokal.
+Im Mittelpunkt stehen die persoenliche Windows-Oberflaeche, PowerShell 7 als sichtbare Standardshell und der Google-/Outlook-Classic-Kalender. Entwicklerwerkzeuge und Reparaturen bleiben getrennte Zusatzmodule. Zugangsdaten und private Dateien bleiben lokal.
+
+## Essentials: persoenliche Grundeinrichtung
+
+In einer PowerShell-7-Sitzung:
+
+```powershell
+.\setup_windows_devops.ps1 -Module Essentials -WhatIf
+.\setup_windows_devops.ps1 -Module Essentials
+```
+
+Das Profil setzt PowerShell 7 im Terminal als Standard, erstellt eine Startmenue-Verknuepfung, blendet alte PowerShell-/ISE-Profile aus, sichert alte Startmenue-Verknuepfungen ausserhalb des Menues und stellt das gespeicherte Look-and-feel wieder her. Es bereitet ausserdem OGCS vor. Google-Anmeldung und Kalenderauswahl sind einmalig gemaess [Kalenderanleitung](modules/calendar-sync/README.md) erforderlich; danach `CalendarConfigure` ausfuehren.
+
+Falls PowerShell 7 auf einem neuen PC noch fehlt, zuerst `setup_windows_devops.ps1 -Module PowerShell` mit Windows PowerShell ausfuehren und danach `pwsh` starten. Windows Terminal muss installiert und mindestens einmal geoeffnet sein. Die Essentials installieren keine komplette Entwickler-Toolchain.
+
+Gespeichertes Look-and-feel: dunkler Windows-/App-Modus, Transparenz aus, zentrierte Taskleistensymbole, ausgeblendete Suche/Chat, klassisches Kontextmenue und der bisherige Explorer-Zustand (Dateiendungen sowie versteckte Dateien ausgeblendet). Details und Ruecknahme: [Look-and-feel](modules/look-and-feel/README.md).
+
+**Taskleistenkalender und Kalendersynchronisation sind verschiedene Funktionen.** OGCS synchronisiert Termine zwischen Google und Outlook Classic. Die auf dem Quellsystem vorhandene Windows-11-Uhr zeigt in ihrer Kalenderansicht keine Termine; das Essentials-Profil behauptet keine automatische Agenda-Integration. Eine Terminanzeige neben der Uhr benoetigt eine separat eingerichtete Kalenderansicht.
 
 ## Schnellstart
 
@@ -26,7 +43,9 @@ Als normaler Benutzer starten. Installer koennen erforderliche Rechte selbst anf
 |---|---|
 | `DevTools` / `install_dev_tools.ps1` | Pakete aus `packages.json`: PowerShell 7, Git, GitHub CLI, Windows Terminal, VS Code |
 | `PowerShell` / `update_powershell_latest.ps1` | Nur PowerShell installieren/aktualisieren, keine Shell-/Editor-Einstellungen aendern |
-| `Terminal` / `set_pwsh_default.ps1` | PowerShell-7-Profil als Windows-Terminal-Standard; benoetigt PowerShell 7; sichert vorhandenes JSON |
+| `Essentials` | Terminal + LookAndFeel + CalendarInstall, ohne Entwicklerpakete |
+| `LookAndFeel` | Gespeicherte Windows-Oberflaeche mit vorherigem lokalem Backup |
+| `Terminal` / `set_pwsh_default.ps1` | PowerShell 7 als Terminalstandard/Startmenue-Verknuepfung; alte PS5-/ISE-Menueeintraege sichern und ausblenden |
 | `ClassicContextMenu` | Optionaler benutzerspezifischer Registry-Tweak; Windows-Build-abhaengig; mit `restore_classic_context_menu.ps1 -Disable` umkehrbar |
 | `CalendarInstall` | Festgelegten OGCS-Installer laden und SHA256 pruefen |
 | `CalendarConfigure` | Nach Kontoanmeldung ausgewaehltes Kalenderprofil konfigurieren; [Anleitung](modules/calendar-sync/README.md) |
@@ -34,6 +53,10 @@ Als normaler Benutzer starten. Installer koennen erforderliche Rechte selbst anf
 | `rdp_check_and_fix.ps1` | Standardmaessig Diagnose; `-Fix` separat als Administrator; optional `-User 'PC\Benutzer'` |
 
 `set_pwsh_default.ps1 -IncludeVSCode` setzt zusaetzlich ein PowerShell-7-Profil in VS Code. Andere JSON-Einstellungen bleiben erhalten; Kommentare/Formatierung werden beim Serialisieren normalisiert. Bei Parsefehlern wird abgebrochen. Terminal/VS Code vorher einmal starten. Das Standardprofil bestimmt die Shell im Terminal, nicht den Windows-Standardhost fuer alle Konsolen.
+
+`Terminal` verwendet `-CreateShortcut -HideLegacy`. Alte PowerShell-/ISE-Startmenue- und Taskleistenverknuepfungen werden unter `%LOCALAPPDATA%\WindowsDevOpsTuning\Backups\legacy-shortcuts-*` gesichert, inklusive `restore-map.json` mit den Originalpfaden. Das kann auch alte Visual-Studio-Developer-PowerShell-Verknuepfungen betreffen. Gemeinsame Startmenueeintraege benoetigen Schreibrechte/ggf. Administratorrechte; sonst meldet das Skript die nicht verschobenen Eintraege. Alte Explorer-PowerShell-Verben werden benutzerspezifisch mit `LegacyDisable` ausgeblendet. Zum Rueckgaengigmachen Verknuepfungen anhand der Map zurueckkopieren, die `LegacyDisable`-Werte unter `HKCU\Software\Classes\{Directory\shell\Powershell,Directory\Background\shell\Powershell,Drive\shell\Powershell}` entfernen und das Terminal-JSON-Backup wiederherstellen.
+
+`powershell.exe`, ISE und Windows-Komponenten werden nicht geloescht oder durch andere Programme ersetzt. Ein ausdruecklicher Aufruf von `powershell.exe` startet weiterhin Windows PowerShell 5.1; fuer eigene Aufrufe `pwsh` verwenden. Dokumentation: [Terminalstandard und Standardprofil](https://learn.microsoft.com/windows/terminal/install).
 
 RDP wird nicht im Setup aktiviert. Der optionale Fix behaelt den vorhandenen Port bei, startet den Dienst und legt eine eigene TCP-Firewallregel nur fuer **Private / LocalSubnet** an. Er setzt keine Monitor-/Audio-/Kamerapolicies und aendert keine anderen Firewallregeln. Bereits bestehende breitere Regeln werden dadurch nicht eingeschraenkt. Windows Home unterstuetzt keinen regulaeren RDP-Host.
 

@@ -15,6 +15,7 @@ foreach ($package in $packages.packages) {
 }
 & (Join-Path $PSScriptRoot 'setup_windows_devops.ps1')
 & (Join-Path $PSScriptRoot 'setup_windows_devops.ps1') -Module DevTools,PowerShell,Terminal,ClassicContextMenu,CalendarInstall -WhatIf
+& (Join-Path $PSScriptRoot 'setup_windows_devops.ps1') -Module Essentials -WhatIf
 & (Join-Path $PSScriptRoot 'modules\calendar-sync\Test-Restore.ps1')
 & (Join-Path $PSScriptRoot 'Test-Terminal.ps1')
 Write-Host 'PASS: Syntax, Paketmanifest, Setup-Vorschau und Kalender-Wiederherstellung.'
