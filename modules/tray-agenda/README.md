@@ -13,7 +13,7 @@ Das Skript baut die App mit dem .NET 10 SDK (fehlt es, wird es per winget instal
 
 ## Funktionsweise
 
-- Ein Low-Level-Maushook erkennt Klicks auf die Uhr-Schaltfläche (`SystemTray.OmniButton`, per UI Automation ermittelt).
+- Ein Low-Level-Maushook erkennt Klicks auf die Uhr-Schaltfläche (`SystemTray.OmniButton`, per UI Automation ermittelt). Er wird alle 2 Minuten und nach dem Standby neu eingerichtet, weil Windows solche Hooks unter Last stillschweigend entfernen kann.
 - **Replace** (Standard): Der Klick wird abgefangen, statt des Windows-Flyouts erscheint der eigene Kalender. Die Glocke rechts neben der Uhr und `Win+N` öffnen weiterhin die Windows-Benachrichtigungen.
 - **Beside**: Das Windows-Flyout öffnet normal, die Terminliste dockt links daneben an und schließt mit ihm.
 - Klick auf einen Termin öffnet ihn in Outlook, `+` legt einen neuen Termin an.

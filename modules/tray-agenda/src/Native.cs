@@ -62,6 +62,8 @@ internal static class Native
     [DllImport("dwmapi.dll")] public static extern int DwmSetWindowAttribute(IntPtr h, int attr, ref int val, int size);
     [DllImport("user32.dll")] public static extern short GetAsyncKeyState(int vk);
     [DllImport("user32.dll")] public static extern bool DestroyIcon(IntPtr h);
+    [DllImport("user32.dll")] public static extern UIntPtr SetTimer(IntPtr hwnd, IntPtr id, uint elapseMs, IntPtr proc);
+    public const uint WM_TIMER = 0x0113;
 
     public static string ClassOf(IntPtr h)
     {

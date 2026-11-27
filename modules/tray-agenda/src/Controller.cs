@@ -56,7 +56,7 @@ sealed class Controller : IDisposable
         refreshTimer.Tick += (_, _) => _ = RefreshAsync();
         refreshTimer.Start();
 
-        SystemEvents.PowerModeChanged += (_, e) => { if (e.Mode == PowerModes.Resume) ui.BeginInvoke(() => { clock.Rescan(); _ = RefreshAsync(); }); };
+        SystemEvents.PowerModeChanged += (_, e) => { if (e.Mode == PowerModes.Resume) ui.BeginInvoke(() => { hook?.Renew(); clock.Rescan(); _ = RefreshAsync(); }); };
         SystemEvents.DisplaySettingsChanged += (_, _) => clock.Rescan();
         SystemEvents.TimeChanged += (_, _) => ui.BeginInvoke(() => win.Rebuild());
 

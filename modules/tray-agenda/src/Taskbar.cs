@@ -111,15 +111,43 @@ sealed class MouseHook : IDisposable
         {
             threadId = Native.GetCurrentThreadId();
             proc = Callback;
-            hook = Native.SetWindowsHookEx(Native.WH_MOUSE_LL, proc, Native.GetModuleHandle(null), 0);
-            if (hook == IntPtr.Zero) Log.Write("SetWindowsHookEx fehlgeschlagen: " + Marshal.GetLastWin32Error());
+            Install();
             ready.Set();
-            while (Native.GetMessage(out _, IntPtr.Zero, 0, 0) > 0) { }
+            // Windows entfernt Low-Level-Hooks stillschweigend, wenn ein Callback zu lange braucht
+            // (z.B. unter Last beim Hochfahren). Darum regelmäßig neu einrichten.
+            Native.SetTimer(IntPtr.Zero, IntPtr.Zero, RenewIntervalMs, IntPtr.Zero);
+            while (Native.GetMessage(out var m, IntPtr.Zero, 0, 0) > 0)
+            {
+                if (m.message is Native.WM_TIMER or WM_RENEW) Install();
+            }
             if (hook != IntPtr.Zero) Native.UnhookWindowsHookEx(hook);
         })
         { IsBackground = true, Name = "MouseHook", Priority = ThreadPriority.AboveNormal };
         t.Start();
         ready.Wait(3000);
+    }
+
+    const uint RenewIntervalMs = 120_000;
+    const uint WM_RENEW = 0x8001; // WM_APP + 1
+
+    /// <summary>Neuen Hook setzen, erst danach den alten entfernen – so geht kein Klick verloren.</summary>
+    void Install()
+    {
+        var fresh = Native.SetWindowsHookEx(Native.WH_MOUSE_LL, proc!, Native.GetModuleHandle(null), 0);
+        if (fresh == IntPtr.Zero)
+        {
+            Log.Write("SetWindowsHookEx fehlgeschlagen: " + Marshal.GetLastWin32Error());
+            return;
+        }
+        var old = hook;
+        hook = fresh;
+        if (old != IntPtr.Zero) Native.UnhookWindowsHookEx(old);
+    }
+
+    /// <summary>Hook sofort erneuern (z.B. nach Standby).</summary>
+    public void Renew()
+    {
+        if (threadId != 0) Native.PostThreadMessage(threadId, WM_RENEW, IntPtr.Zero, IntPtr.Zero);
     }
 
     IntPtr Callback(int nCode, IntPtr wParam, IntPtr lParam)
