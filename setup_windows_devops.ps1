@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [ValidateSet('Essentials','LookAndFeel','OutlookClassic','DevTools','PowerShell','Terminal','ClassicContextMenu','CalendarInstall','CalendarConfigure')]
+    [ValidateSet('Essentials','LookAndFeel','OutlookClassic','DevTools','PowerShell','Terminal','ClassicContextMenu','CalendarInstall','CalendarConfigure','TrayAgenda')]
     [string[]]$Module = @(),
     [switch]$Silent
 )
@@ -15,6 +15,7 @@ $steps = @{
     ClassicContextMenu = @{ Script='restore_classic_context_menu.ps1'; Arguments=@{Enable=$true} }
     CalendarInstall = @{ Script='modules\calendar-sync\Restore-CalendarSync.ps1'; Arguments=@{Mode='Install'} }
     CalendarConfigure = @{ Script='modules\calendar-sync\Restore-CalendarSync.ps1'; Arguments=@{Mode='Configure'} }
+    TrayAgenda = @{ Script='modules\tray-agenda\Install-TrayAgenda.ps1'; Arguments=@{} }
 }
 if (-not $Module.Count) {
     Write-Host 'Ohne Modulauswahl wird nichts veraendert. Verfuegbar:'

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>TrayAgenda</AssemblyName>
+    <RootNamespace>TrayAgenda</RootNamespace>
+    <StartupObject>TrayAgenda.Program</StartupObject>
+    <Version>1.0.0</Version>
+    <SatelliteResourceLanguages>de;en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ical.Net" Version="4.3.1" />
+  </ItemGroup>
+
+</Project>

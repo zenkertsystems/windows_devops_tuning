@@ -15,3 +15,5 @@ settings*.xml*
 *token*
 *credential*
 *secret*
+bin/
+obj/

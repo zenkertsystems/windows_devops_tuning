@@ -14,7 +14,7 @@ foreach ($package in $packages.packages) {
     if ($package.Id -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]+$') { throw 'Ungueltige Paketkennung.' }
 }
 & (Join-Path $PSScriptRoot 'setup_windows_devops.ps1')
-& (Join-Path $PSScriptRoot 'setup_windows_devops.ps1') -Module DevTools,PowerShell,Terminal,ClassicContextMenu,CalendarInstall -WhatIf
+& (Join-Path $PSScriptRoot 'setup_windows_devops.ps1') -Module DevTools,PowerShell,Terminal,ClassicContextMenu,CalendarInstall,TrayAgenda -WhatIf
 & (Join-Path $PSScriptRoot 'setup_windows_devops.ps1') -Module Essentials -WhatIf
 & (Join-Path $PSScriptRoot 'modules\calendar-sync\Test-Restore.ps1')
 & (Join-Path $PSScriptRoot 'Test-Terminal.ps1')

@@ -4,6 +4,8 @@ Im Mittelpunkt stehen die persoenliche Windows-Oberflaeche, PowerShell 7 als sic
 
 Termine direkt unter dem Kalender im Windows-Benachrichtigungscenter: [Kalender-Seitenleiste einrichten](modules/calendar-sidebar/README.md). Dieses separate Modul benoetigt Windhawk und Administratorrechte; Kalenderdaten bleiben lokal.
 
+Kalender wie bei Windows 10 (Monatsansicht + Termine beim Klick auf die Uhr, ohne Shell-Mod und Adminrechte): [TrayAgenda](modules/tray-agenda/README.md), Modul `TrayAgenda`.
+
 ## Essentials: persoenliche Grundeinrichtung
 
 In einer PowerShell-7-Sitzung:
